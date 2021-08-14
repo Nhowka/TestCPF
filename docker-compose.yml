@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+    app:
+      build:
+        context: .
+        dockerfile: ./Dockerfile
+        args:
+          USER_UID: 1000
+          USER_GID: 1000
+
+      volumes:
+        - ..:/workspace:cached
+      command: sleep infinity
+      depends_on:
+        - db
+      network_mode: service:db
+
+    db:
+      image: postgres:latest
+      restart: unless-stopped
+      volumes:
+        - postgres-data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_DB: postgres
+        POSTGRES_PASSWORD: postgres
+      ports:
+        - "8085:8085"
+
+volumes:
+    postgres-data:
